@@ -4,6 +4,7 @@
 
 .game-container {
   height: 100%;
+  margin: 0 40px;
   overflow: hidden;
 }
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import styled from "styled-components";
 import "../App.css";
+import CanvasGame from "../components/CanvasGame";
 
 export const GamePage = () => {
   const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
@@ -122,6 +124,7 @@ export const GamePage = () => {
     }
     stop();
   };
+
   return (
     <div className="game-container">
       <div className="clock-holder">
@@ -137,14 +140,26 @@ export const GamePage = () => {
           </button>
         </div>
       </div>
-      <div className="game-container board" ref={boardRef}>
+      {/* <div className="game-container board" ref={boardRef}>
         <div className="target-dot" style={targetStyle} ref={targetRef}></div>
         <svg
           height={window.innerHeight}
           width={window.innerWidth}
           onMouseMove={(event) => handleMouseMove(event)}
         ></svg>
-      </div>
+      </div> */}
+      <GameContainer>
+        <CanvasGame />
+      </GameContainer>
     </div>
   );
 };
+
+const GameContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+  border: 2px solid #00aba9;
+`;
