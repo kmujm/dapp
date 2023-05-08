@@ -2,11 +2,6 @@
 pragma solidity >=0.4.11;
 
 contract Game {
-    // struct Player {
-    // 	address addr;	// 참가자 주소
-    // 	uint amount;	// 참가비
-    // }
-
     address public owner;
     uint public totalPlayers;
 
@@ -18,7 +13,7 @@ contract Game {
 
     uint256 public totalAmount;
 
-    // mapping (uint => Player) public players;
+    address public contractAddress; // TODO: smartContract의 주소 초기화
 
     modifier onlyOwner() {
         require(msg.sender == owner);
@@ -44,18 +39,14 @@ contract Game {
         require(!ended);
 
         totalPlayers++;
-        totalAmount += msg.value;
+        totalAmount += msg.value; // TODO: 값 확인
 
-        // owner한테 이더 송금
-        // owner.transfer(msg.value);
-        if (!payable(owner).send(address(this).balance)) {
-            revert();
-        }
+        require(payable(contractAddress).send(msg.value));
     }
 
-    ///  메인 페이지에 보여줄 현재 상금과 기록
-    function getGameInfo() public view returns (uint, uint) {
-        return (highestRecord, totalAmount);
+    ///  메인 페이지에 보여줄 정보: 게임 참여자 수, 최고 기록, 총 상금
+    function getGameInfo() public view returns (uint, uint, uint256) {
+        return (totalPlayers, highestRecord, totalAmount);
     }
 
     /// 기록 갱신
@@ -71,11 +62,8 @@ contract Game {
 
     /// 게임 종료
     function checkGameOver() public {
-        require(!ended);
-        require(block.timestamp >= deadline);
+        require(!ended && block.timestamp >= deadline);
         ended = true;
-        if (!payable(highestPlayer).send(address(this).balance)) {
-            revert();
-        }
+        require(payable(highestPlayer).send(totalAmount));
     }
 }
