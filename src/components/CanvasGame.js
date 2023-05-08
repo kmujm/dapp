@@ -1,13 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 
-const CanvasGame = (width, height) => {
+const CanvasGame = ({ width, height, timerStart, timerStop }) => {
   const canvasRef = useRef(null);
   const [ballSize, setBallSize] = useState(50);
   const [x, setX] = useState(350);
   const [y, setY] = useState(200);
+  const [clientX, setClientX] = useState(0);
+  const [clientY, setClientY] = useState(0);
   const [vx, setVx] = useState(2);
   const [vy, setVy] = useState(2);
   const [isClicked, setIsClicked] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,7 +26,7 @@ const CanvasGame = (width, height) => {
     };
 
     const updateBall = () => {
-      if (isClicked) {
+      if (isClicked && !gameOver) {
         const nextX = x + vx;
         const nextY = y + vy;
 
@@ -38,6 +41,19 @@ const CanvasGame = (width, height) => {
         } else {
           setY(nextY);
         }
+
+        if (
+          clientX < x - ballSize ||
+          clientX > x + ballSize ||
+          clientY < y - ballSize ||
+          clientY > y + ballSize
+        ) {
+          setIsClicked(false);
+          setVx(0);
+          setVy(0);
+          timerStop();
+          setGameOver(true);
+        }
       }
     };
 
@@ -49,11 +65,9 @@ const CanvasGame = (width, height) => {
     };
 
     const handleClick = (e) => {
-      if (!isClicked) {
-        console.log("clicked");
+      if (!isClicked && !gameOver) {
         const mouseX = e.clientX - canvas.offsetLeft;
         const mouseY = e.clientY - canvas.offsetTop;
-        console.log(mouseX);
 
         if (
           mouseX >= x - ballSize &&
@@ -62,6 +76,7 @@ const CanvasGame = (width, height) => {
           mouseY >= y - ballSize
         ) {
           setIsClicked(true);
+          timerStart();
         }
       }
     };
@@ -69,24 +84,14 @@ const CanvasGame = (width, height) => {
     const handleMouseMove = (e) => {
       const mouseX = e.clientX - canvas.offsetLeft;
       const mouseY = e.clientY - canvas.offsetTop;
-      console.log(isClicked);
 
       //   console.log(isClicked);
       //   console.log(mouseX);
       //   //   console.log(mouseY);
       //   console.log(x);
 
-      if (isClicked) {
-        if (
-          mouseX < x - ballSize ||
-          mouseX > x + ballSize ||
-          mouseY > y + ballSize ||
-          mouseY < y - ballSize
-        ) {
-          console.log([x, mouseX, y, mouseY]);
-          setIsClicked(false);
-        }
-      }
+      setClientY(mouseY);
+      setClientX(mouseX);
     };
 
     canvas.addEventListener("click", handleClick);
