@@ -8,15 +8,15 @@ contract Game {
     // }
 
     address public owner;
-    uint public numPlayers;
+    uint public totalPlayers;
 
     uint public deadline; // (UnixTime)
     bool public ended;
 
-    uint public highestRecord;
+    uint public highestRecord = 0;
     address public highestPlayer;
 
-    uint public totalAmount;
+    uint256 public totalAmount;
 
     // mapping (uint => Player) public players;
 
@@ -34,11 +34,8 @@ contract Game {
 
         ended = false;
 
-        numPlayers = 0;
+        totalPlayers = 0;
         totalAmount = 0;
-
-        highestRecord = 0;
-        highestPlayer = msg.sender;
     }
 
     /// 게임 참가
@@ -46,7 +43,7 @@ contract Game {
         // 게임이 참여 기한 종료되지 않음
         require(!ended);
 
-        numPlayers++;
+        totalPlayers++;
         totalAmount += msg.value;
 
         // owner한테 이더 송금
@@ -61,25 +58,22 @@ contract Game {
         return (highestRecord, totalAmount);
     }
 
-    /// 기록 갱신 여부 확인
-    function checkRecord(uint record) public payable onlyOwner {
-        require(!ended);
+    /// 기록 갱신
+    function updateRecord(uint record) public {
+        require(!ended, "Game is already ended.");
+        require(block.timestamp <= deadline, "Game is already ended.");
 
-        // 마감일 전
-        require(block.timestamp <= deadline);
-
-        require(record > highestRecord);
-
-        highestPlayer = msg.sender;
-        highestRecord = record;
+        if (record > highestRecord) {
+            highestRecord = record;
+            highestPlayer = msg.sender;
+        }
     }
 
     /// 게임 종료
-    function gameOver() public onlyOwner {
-        require(ended);
-
+    function checkGameOver() public {
+        require(!ended);
         require(block.timestamp >= deadline);
-
+        ended = true;
         if (!payable(highestPlayer).send(address(this).balance)) {
             revert();
         }
