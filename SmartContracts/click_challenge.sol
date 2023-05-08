@@ -83,8 +83,4 @@ contract Game {
             revert();
         }
     }
-
-    function kill() public onlyOwner {
-        selfdestruct(payable(owner));
-    }
 }
