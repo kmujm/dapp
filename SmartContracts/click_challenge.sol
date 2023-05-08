@@ -71,6 +71,7 @@ contract Game {
         require(record > highestRecord);
 
         highestPlayer = msg.sender;
+        highestRecord = record;
     }
 
     /// 게임 종료
