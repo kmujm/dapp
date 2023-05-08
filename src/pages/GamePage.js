@@ -73,4 +73,6 @@ const GameContainer = styled.div`
   height: 100%;
   overflow: hidden;
   border: 2px solid #00aba9;
+  min-width: 700px;
+  min-height: 400px;
 `;
