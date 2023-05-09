@@ -8,8 +8,9 @@
 ## Game Rules
 
 - entry fee: 0.0002 ether
-- 10% of the entry fee goes to the contract owner
 - 90% of the entry fee goes to the winner
+- 1% ~ 5% of the entry fee goes to the distributor (luckiest player)
+- 5% ~ 9% of the entry fee goes to the contract owner
 - the winner is the person who get highest score
 - the winner can withdraw the prize money
 - the game will be reset every 7 days
@@ -24,11 +25,14 @@
   - getWinner()
 - getAllInfo() 함수를 통해 한번에 가져올 수도 있다.
 - 게임을 참여하기 위해서는 닉네임을 입력한 후 참가비를 지불해야 한다.
+- 참가비는 payEntryFee() 함수를 통해 지불한다.
 - 참가비를 정상적으로 지불했다면 "Game Start" 버튼이 활성화 된다.
 - 원을 누르고 있는 시간동안 점수가 증가한다.
-- 게임이 끝나면 본인의 점수가 블록체인에 기록된다.
-- 게임 시간이 마감되면 "정산 후 게임 생성" 버튼이 활성화 된다.
-- "정산 후 게임 생성" 버튼을 누르면 상금이 정산되며 게임을 다시 시작할 수 있게 된다.
+- 게임이 끝나면 recordScore() 함수를 통해 본인의 점수를 블록체인에 기록할 수 있다.
+- recordScore() 함수의 인자로 점수와 닉네임을 차례대로 넣어준다.
+- 게임 시간이 마감되면 "정산 후 새 게임 생성" 버튼이 활성화 된다.
+- "정산 후 새 게임 생성" 버튼을 누르면 상금이 정산되며 게임을 다시 시작할 수 있게 된다.
+- 해당 버튼을 가장 먼저 누른 사람에게는 1% ~ 5%의 상금이 지급된다.
 
 # Getting Started with Create React App
 
