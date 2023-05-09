@@ -9,7 +9,7 @@ contract ClickChallenge {
     uint256 public prizePool;
 
     // 참가비
-    uint256 public constant entryFee = 0.0002 ether;
+    uint256 public constant entryFee = 0.0005 ether;
 
     // 게임 기간 (3일)
     uint256 public constant gameDuration = 3 days;
@@ -21,7 +21,7 @@ contract ClickChallenge {
     uint256 public highestScore;
 
     // 게임 참가자의 수
-    uint256 public numberOfPlayers;
+    uint256 public playerCount;
 
     // 최고 점수를 기록한 참가자의 닉네임
     string public highestScorerName;
@@ -33,16 +33,28 @@ contract ClickChallenge {
     constructor() {
         owner = payable(msg.sender);
         gameEndTime = block.timestamp + gameDuration;
-        numberOfPlayers = 0;
+        playerCount = 0;
     }
 
-    // 게임 참여 함수
-    function play(uint256 score, string calldata name) external payable {
+    // 참가비를 납부하는 함수
+    function payEntryFee() external payable {
         // 게임 종료 시간이 지나지 않았는지 확인
         require(block.timestamp < gameEndTime, "Game has ended");
 
         // 참가비가 정확한지 확인
-        require(msg.value >= entryFee, "Minimum amount of Ether is 0.0002");
+        require(msg.value >= entryFee, "Minimum amount of Ether is 0.0005");
+
+        // 상금을 참가비로 누적
+        prizePool += msg.value;
+
+        // 게임 참가자 수를 1 증가
+        playerCount++;
+    }
+
+    // 점수를 기록하는 함수
+    function recordScore(uint256 score, string calldata name) external {
+        // 게임 종료 시간이 지나지 않았는지 확인
+        require(block.timestamp < gameEndTime, "Game has ended");
 
         if (score > highestScore) {
             // 최고 점수를 갱신한 경우, 최고 점수와 해당 참가자의 닉네임과 지갑 주소를 저장
@@ -50,12 +62,6 @@ contract ClickChallenge {
             highestScorerName = name;
             highestScorerAddress = msg.sender;
         }
-
-        // 상금을 참가비로 누적
-        prizePool += msg.value;
-
-        // 게임 참가자 수를 1 증가
-        numberOfPlayers++;
     }
 
     // 상금 분배 함수
@@ -90,8 +96,8 @@ contract ClickChallenge {
     }
 
     // 게임 참가자의 수를 반환하는 함수
-    function getNumberOfPlayers() public view returns (uint256) {
-        return numberOfPlayers;
+    function getPlayerCount() public view returns (uint256) {
+        return playerCount;
     }
 
     // 1등의 점수, 닉네임, 지갑 주소를 반환하는 함수
@@ -123,7 +129,7 @@ contract ClickChallenge {
     {
         return (
             gameEndTime,
-            numberOfPlayers,
+            playerCount,
             (prizePool * 9) / 10,
             highestScorerName,
             highestScorerAddress,
