@@ -3,7 +3,12 @@
 ## Contract Info
 
 - Test Network: Seporia
-- Contract Address: 0x7d5503Df86FC8A956F85cC444F541CCE38a655df
+- Contract Address: 0xD0414937aeD63aC6bde8B0abd9E31Af040B65495
+
+## Contract Code
+
+- [ClickChallenge.sol](https://github.com/kmujm/dapp/blob/master/SmartContracts/click_challenge.sol)
+- [ABI](https://github.com/kmujm/dapp/blob/master/SmartContracts/abi.txt)
 
 ## Game Rules
 

@@ -1,33 +1,15 @@
 [
 	{
 		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
 		"name": "distributePrize",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "score",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			}
-		],
-		"name": "play",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	},
 	{
 		"inputs": [],
@@ -121,7 +103,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "getNumberOfPlayers",
+		"name": "getPlayerCount",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -209,12 +191,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "numberOfPlayers",
+		"name": "owner",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "address payable",
 				"name": "",
-				"type": "uint256"
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -222,12 +204,19 @@
 	},
 	{
 		"inputs": [],
-		"name": "owner",
+		"name": "payEntryFee",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "playerCount",
 		"outputs": [
 			{
-				"internalType": "address payable",
+				"internalType": "uint256",
 				"name": "",
-				"type": "address"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -244,6 +233,24 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "score",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "recordScore",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
