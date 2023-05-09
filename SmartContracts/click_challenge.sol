@@ -8,8 +8,8 @@ contract ClickChallenge {
     // 게임 상금
     uint256 public prizePool;
 
-    // 참가비
-    uint256 public constant entryFee = 0.0005 ether;
+    // 참가비 (추납 금액은 상금을 위한 기부금으로 사용)
+    uint256 public constant entryFee = 500000000000000 wei; // 0.0005 ether
 
     // 게임 기간 (3일)
     uint256 public constant gameDuration = 3 days;
