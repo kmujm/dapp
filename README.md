@@ -1,3 +1,35 @@
+# Click Challenge (Smart Contract)
+
+## Contract Info
+
+- Test Network: Seporia
+- Contract Address: 0x7d5503Df86FC8A956F85cC444F541CCE38a655df
+
+## Game Rules
+
+- entry fee: 0.0002 ether
+- 10% of the entry fee goes to the contract owner
+- 90% of the entry fee goes to the winner
+- the winner is the person who get highest score
+- the winner can withdraw the prize money
+- the game will be reset every 7 days
+
+## Flow
+
+- 게임 참여자수, 1등 상금, 게임 마감까지 남은 시간, 1등의 닉네임/점수/지갑 주소 등이 표시된다.
+- 해당 데이터는 아래와 같은 함수를 통해 가져온다.
+  - getNumberOfPlayers()
+  - getWinnerPrize()
+  - getGameEndTime()
+  - getWinner()
+- getAllInfo() 함수를 통해 한번에 가져올 수도 있다.
+- 게임을 참여하기 위해서는 닉네임을 입력한 후 참가비를 지불해야 한다.
+- 참가비를 정상적으로 지불했다면 "Game Start" 버튼이 활성화 된다.
+- 원을 누르고 있는 시간동안 점수가 증가한다.
+- 게임이 끝나면 본인의 점수가 블록체인에 기록된다.
+- 게임 시간이 마감되면 "정산 후 게임 생성" 버튼이 활성화 된다.
+- "정산 후 게임 생성" 버튼을 누르면 상금이 정산되며 게임을 다시 시작할 수 있게 된다.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
