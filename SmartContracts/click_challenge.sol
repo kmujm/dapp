@@ -72,11 +72,18 @@ contract ClickChallenge {
         // 1등 상금 계산 (상금의 90%)
         uint256 winnerPrize = (prizePool * 9) / 10;
 
+        // 1%에서 5% 사이의 금액을 랜덤으로 선택해서 distributePrize 함수를 실행한 사람에게 지급
+        uint256 rewardToDistributor = (prizePool / 100) *
+            (1 + (block.timestamp % 5));
+
         // 스마트 컨트랙트 배포자의 수수료 계산 (상금의 10%)
-        uint256 ownerPrize = prizePool - winnerPrize;
+        uint256 ownerPrize = prizePool - winnerPrize - rewardToDistributor;
 
         // 1등에게 상금 지급
         payable(highestScorerAddress).transfer(winnerPrize);
+
+        // distributePrize 함수를 실행한 사람에게 당첨금 지급
+        payable(msg.sender).transfer(rewardToDistributor);
 
         // 스마트 컨트랙트 배포자에게 수수료 지급
         payable(owner).transfer(ownerPrize);
