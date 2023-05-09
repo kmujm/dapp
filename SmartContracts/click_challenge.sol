@@ -24,6 +24,9 @@ contract Game {
         // 컨트랙트 owner
         owner = msg.sender;
 
+        contractAddress = msg.sender; // owner의 주소로 설정
+        // contractAddress = address(this); // 해당 계약의 주소로 설정
+
         // 마감일(Unixtime)
         deadline = block.timestamp + _duration;
 
@@ -35,13 +38,28 @@ contract Game {
 
     /// 게임 참가
     function play() public payable {
-        // 게임이 참여 기한 종료되지 않음
-        require(!ended);
+        // 메시지 전송 시 보낼 이더 양이 0인 경우 에러 발생
+        require(msg.value > 0, "You must send some Ether to play");
+
+        // 최소 이더량을 확인하고, 이상인 경우에만 게임 참가 가능
+        require(msg.value >= 0.0002 ether, "Minimum amount of Ether is 0.0002");
+
+        // 이미 게임 참가 기한이 종료된 경우 에러 발생
+        require(!ended, "The game has already ended");
 
         totalPlayers++;
-        totalAmount += msg.value; // TODO: 값 확인
+        totalAmount += msg.value;
 
-        require(payable(contractAddress).send(msg.value));
+        // 함수 호출 시 메시지의 value 값이 설정되지 않은 경우 에러 발생
+        require(
+            msg.value == address(this).balance,
+            "Sent Ether value does not match the expected value"
+        );
+
+        require(
+            payable(contractAddress).send(msg.value),
+            "Failed to send Ether to contract"
+        );
     }
 
     ///  메인 페이지에 보여줄 정보: 게임 참여자 수, 최고 기록, 총 상금
