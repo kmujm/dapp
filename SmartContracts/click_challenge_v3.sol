@@ -52,7 +52,7 @@ contract ClickChallenge {
         }
 
         // 상금을 참가비로 누적
-        prizePool += entryFee;
+        prizePool += msg.value;
 
         // 게임 참가자 수를 1 증가
         numberOfPlayers++;
@@ -113,5 +113,21 @@ contract ClickChallenge {
     // winnerPrize(1등이 수령할 상금)를 반환하는 함수
     function getWinnerPrize() public view returns (uint256) {
         return (prizePool * 9) / 10;
+    }
+
+    // 필요한 정보들을 모두 가져오는 함수
+    function getAllInfo()
+        public
+        view
+        returns (uint256, uint256, uint256, string memory, address, uint256)
+    {
+        return (
+            gameEndTime,
+            numberOfPlayers,
+            (prizePool * 9) / 10,
+            highestScorerName,
+            highestScorerAddress,
+            highestScore
+        );
     }
 }
