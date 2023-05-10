@@ -13,6 +13,7 @@ export const GamePage = () => {
   const [nickname, setNickname] = useState("");
   const [gameStart, setGameStart] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
@@ -37,7 +38,6 @@ export const GamePage = () => {
     });
     // const accounts = await web3.eth.requestAccounts();
     await setAccount(accounts[0]);
-    console.log(account);
   };
 
   // 최초 랜더링시 실행
@@ -45,8 +45,6 @@ export const GamePage = () => {
     if (typeof window.ethereum !== "undefined") {
       try {
         window.web3 = new Web3(window.ethereum);
-        // setWeb3(window.web3);
-        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
         connectWallet();
         getInstance();
       } catch (err) {
@@ -62,16 +60,13 @@ export const GamePage = () => {
 
   const stop = () => {
     clearInterval(interv);
-    // setTime({ ms: 0, s: 0, m: 0, h: 0 });
-
-    // 기록 갱신 여부 체크
     gameOver();
   };
 
   const gameOver = async () => {
     await contractInstance.methods
       .recordScore(
-        (time.h * 3600 + time.m * 360 + time.s * 60) * 1000 + time.ms,
+        (time.h * 3600 + time.m * 60 + time.s) * 1000 + time.ms,
         nickname
       )
       .send({ from: account });
@@ -110,11 +105,13 @@ export const GamePage = () => {
   const payFee = async () => {
     try {
       // 게임 참가비 송금
+      setLoading(true);
       await contractInstance.methods.payEntryFee().send({
         from: account,
         value: window.web3.utils.toWei("0.0005", "ether"),
       });
       setPaid(true);
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -131,6 +128,8 @@ export const GamePage = () => {
     }
   };
 
+  // gameStart && contractInstance && account && paid
+
   return (
     <div className="game-container">
       {gameStart && contractInstance && account && paid ? (
@@ -146,7 +145,7 @@ export const GamePage = () => {
             </div>
           </div>
           <GameContainer>
-            <CanvasGame timerStart={start} timerStop={stop} />
+            <CanvasGame timerStart={start} timerStop={stop} timer={time} />
           </GameContainer>
         </>
       ) : (
@@ -159,9 +158,41 @@ export const GamePage = () => {
           <Button onClick={handleGameStart}>Set</Button>
         </InputContainer>
       )}
+      {loading ? (
+        <LoadingContainer>
+          <img src="/ethereum.png" height={100} width={100} alt="ethereum" />
+        </LoadingContainer>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
+
+const LoadingContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    animation: rotate 2s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotateZ(0deg);
+    }
+    to {
+      transform: rotateZ(360deg);
+    }
+  }
+`;
 
 const GameContainer = styled.div`
   display: flex;

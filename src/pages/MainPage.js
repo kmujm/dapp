@@ -11,84 +11,20 @@ export const MainPage = () => {
   // 기록
   const [contractInstance, setContractInstance] = useState(undefined);
   const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
-
-  const [account, setAccount] = useState();
-
-  // contract instance
-  const getInstance = async () => {
-    // console.log(web3);
-    try {
-      setContractInstance(await new window.web3.eth.Contract(ABI, address));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        window.web3 = new Web3(window.ethereum);
-        // setWeb3(window.web3);
-        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-        getInstance();
-        console.log(contractInstance.methods.getWinner());
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }, []);
-
-  const [data, setData] = useState();
-
   const [countDown, setCountDown] = useState();
+  const [account, setAccount] = useState();
+  const [data, setData] = useState();
+  const [bestScore, setBestScore] = useState({ h: 0, m: 0, s: 0, ms: 0 });
 
-  let bestTime = {
-    m: 12,
-    s: 5,
-    ms: 88,
-  };
-
-  // game info, 상금, 최고기록 등 정보
-  const getGameInfo = async () => {
-    try {
-      const data = await contractInstance.methods.getAllInfo().call();
-      console.log(data);
-      setData(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    if (data) {
-      Timer();
-    }
-  }, [data]);
-
-  // contract instance 생성 후 game info get
-  useEffect(() => {
-    console.log(contractInstance);
-    getGameInfo();
-    // checkGameState();
-  }, [contractInstance]);
-
-  // 최초 랜더링시 실행
-  useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        window.web3 = new Web3(window.ethereum);
-        // setWeb3(window.web3);
-        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-
-        getInstance();
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }, []);
-
-  const Timer = () => {
-    setInterval(convertTime, 1000);
+  const handleBestScore = (data) => {
+    const ms = data % 1000;
+    const seconds = parseInt(data / 1000);
+    setBestScore({
+      ms,
+      s: seconds % 60,
+      m: parseInt(seconds / 60),
+      h: parseInt(seconds / 3600),
+    });
   };
 
   const convertTime = () => {
@@ -106,23 +42,82 @@ export const MainPage = () => {
     await contractInstance.methods.distributePrize().send({ from: account });
   };
 
+  // contract instance
+  const getInstance = async () => {
+    try {
+      setContractInstance(await new window.web3.eth.Contract(ABI, address));
+    } catch (err) {}
+  };
+
+  // game info, 상금, 최고기록 등 정보
+  const getGameInfo = async () => {
+    try {
+      const data = await contractInstance.methods.getAllInfo().call();
+      setData(data);
+      handleBestScore(data[5]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const Timer = () => {
+    setInterval(convertTime, 1000);
+  };
+
+  // metamask 연결
+  const connectWallet = async () => {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    await setAccount(accounts[0]);
+  };
+
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        window.web3 = new Web3(window.ethereum);
+        connectWallet();
+        getInstance();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      Timer();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (contractInstance) {
+      getGameInfo();
+    }
+  }, [contractInstance]);
+
   return (
     <MainContainer>
       <MainBanner>
-        {countDown ? (
-          <h2>
-            {countDown.day}일 {countDown.hour}시간 {countDown.min}분
-            {countDown.sec} 초
-          </h2>
-        ) : null}
         <h1>Total: {data ? data[2] / 1000000000000000000 : null}ETH</h1>
         <h1>
           Best:{" "}
-          {/* {`${String(bestTime.m).padStart(2, "0")}(m) : ${String(
-            bestTime.s
-          ).padStart(2, "0")}(s) ${String(bestTime.ms).padStart(2, "0")}(ms)`} */}
-          {data ? data[5] : null}
+          {`${String(bestScore.h).padStart(2, "0")}(h) : ${String(
+            bestScore.m
+          ).padStart(2, "0")}(m) : ${String(bestScore.s).padStart(
+            2,
+            "0"
+          )}(s) : ${String(bestScore.ms).padStart(2, "0")}(ms) - ${
+            data ? data[3] : ""
+          }`}
         </h1>
+        {countDown ? (
+          <h2>
+            {countDown.day}일 {countDown.hour}시간 {countDown.min}분{" "}
+            {countDown.sec}초
+          </h2>
+        ) : null}
       </MainBanner>
       <BodyContainer>
         <AdsContainer />
@@ -132,7 +127,7 @@ export const MainPage = () => {
               <h2>Get started</h2>
             </Button>
           ) : (
-            <Button>
+            <Button onClick={handleDistributePrize}>
               <h2>정산 후 새 게임 생성</h2>
             </Button>
           )}

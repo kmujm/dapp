@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const CanvasGame = ({ width, height, timerStart, timerStop }) => {
+const CanvasGame = ({ timer, timerStart, timerStop }) => {
   const canvasRef = useRef(null);
+  const navigate = useNavigate();
   const [ballSize, setBallSize] = useState(50);
   const [x, setX] = useState(350);
   const [y, setY] = useState(200);
@@ -30,6 +32,7 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
         const nextX = x + vx;
         const nextY = y + vy;
 
+        // update position
         if (nextX + ballSize > width || nextX - ballSize < 0) {
           setVx(-vx);
         } else {
@@ -42,6 +45,7 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
           setY(nextY);
         }
 
+        // game over
         if (
           clientX < x - ballSize ||
           clientX > x + ballSize ||
@@ -53,6 +57,15 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
           setVy(0);
           timerStop();
           setGameOver(true);
+          alert(
+            `Your score is ${String(timer.h).padStart(2, "0")} : ${String(
+              timer.m
+            ).padStart(2, "0")} : ${String(timer.s).padStart(
+              2,
+              "0"
+            )} : ${String(timer.ms).padStart(2, "0")}`
+          );
+          navigate("/");
         }
       }
     };
@@ -83,11 +96,6 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
     const handleMouseMove = (e) => {
       const mouseX = e.clientX - canvas.offsetLeft;
       const mouseY = e.clientY - canvas.offsetTop;
-
-      //   console.log(isClicked);
-      //   console.log(mouseX);
-      //   //   console.log(mouseY);
-      //   console.log(x);
 
       setClientY(mouseY);
       setClientX(mouseX);

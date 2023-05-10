@@ -18,7 +18,7 @@
 - 5% ~ 9% of the entry fee goes to the contract owner
 - the winner is the person who get highest score
 - the winner can withdraw the prize money
-- the game will be reset every 7 days
+- the game will be reset every 3 days
 
 ## Flow
 
