@@ -61,7 +61,6 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
       ctx.clearRect(0, 0, width, height);
       updateBall();
       drawBall();
-      window.requestAnimationFrame(draw);
     };
 
     const handleClick = (e) => {
@@ -97,10 +96,10 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
     canvas.addEventListener("click", handleClick);
     canvas.addEventListener("mousemove", handleMouseMove);
 
-    const animationId = window.requestAnimationFrame(draw);
+    const animationId = setInterval(draw, 10);
 
     return () => {
-      window.cancelAnimationFrame(animationId);
+      clearInterval(animationId);
       canvas.removeEventListener("click", handleClick);
     };
   }, [x, y, vx, vy, isClicked]);
