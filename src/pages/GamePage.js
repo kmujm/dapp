@@ -14,7 +14,7 @@ export const GamePage = () => {
   const [nickname, setNickname] = useState("");
   const [gameStart, setGameStart] = useState(false);
 
-  const address = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+  const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
   // 이더리움 객체 가져오기
   const [web3, setWeb3] = useState();
