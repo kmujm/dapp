@@ -13,6 +13,7 @@ export const GamePage = () => {
   const [nickname, setNickname] = useState("");
   const [gameStart, setGameStart] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
@@ -104,11 +105,13 @@ export const GamePage = () => {
   const payFee = async () => {
     try {
       // 게임 참가비 송금
+      setLoading(true);
       await contractInstance.methods.payEntryFee().send({
         from: account,
         value: window.web3.utils.toWei("0.0005", "ether"),
       });
       setPaid(true);
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -155,9 +158,41 @@ export const GamePage = () => {
           <Button onClick={handleGameStart}>Set</Button>
         </InputContainer>
       )}
+      {loading ? (
+        <LoadingContainer>
+          <img src="/ethereum.png" height={100} width={100} alt="ethereum" />
+        </LoadingContainer>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
+
+const LoadingContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    animation: rotate 2s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotateZ(0deg);
+    }
+    to {
+      transform: rotateZ(360deg);
+    }
+  }
+`;
 
 const GameContainer = styled.div`
   display: flex;

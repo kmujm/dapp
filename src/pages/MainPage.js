@@ -114,7 +114,7 @@ export const MainPage = () => {
         </h1>
         {countDown ? (
           <h2>
-            {countDown.day}일 {countDown.hour}시간 {countDown.min}분
+            {countDown.day}일 {countDown.hour}시간 {countDown.min}분{" "}
             {countDown.sec}초
           </h2>
         ) : null}
