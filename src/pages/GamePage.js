@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "../App.css";
 import CanvasGame from "../components/CanvasGame";
 
 import Web3 from "web3";
-import { ABI } from "../assets/abi";
+import { ABI } from "../assets/abiobj";
 
 export const GamePage = () => {
   const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
@@ -13,8 +12,9 @@ export const GamePage = () => {
   const [account, setAccount] = useState("");
   const [nickname, setNickname] = useState("");
   const [gameStart, setGameStart] = useState(false);
+  const [paid, setPaid] = useState(false);
 
-  const address = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+  const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
   // 이더리움 객체 가져오기
   const [web3, setWeb3] = useState();
@@ -104,6 +104,19 @@ export const GamePage = () => {
     }
   };
 
+  const payFee = async () => {
+    try {
+      // 게임 참가비 송금
+      await contractInstance.methods.payEntryFee().send({
+        from: account,
+        value: window.web3.utils.toWei("0.0005", "ether"),
+      });
+      setPaid(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleGameStart = () => {
     if (!account) {
       alert("지갑을 연결해 주세요!!");
@@ -111,12 +124,13 @@ export const GamePage = () => {
       alert("스마트 컨트랙트를 연결중입니다. 잠시만 기다려주세요!");
     } else {
       setGameStart(true);
+      payFee();
     }
   };
 
   return (
     <div className="game-container">
-      {gameStart && contractInstance && account ? (
+      {gameStart && contractInstance && account && paid ? (
         <>
           <div className="clock-holder">
             <div className="stopwatch">

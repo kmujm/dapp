@@ -4,70 +4,16 @@ import Web3 from "web3";
 import { useNavigate } from "react-router-dom";
 
 import AdsContainer from "../components/AdsContainer";
-import backgorund from "../assets/background2.jpeg";
 import { ABI } from "../assets/abiobj";
-
-const Container = styled.div`
-  background-image: url(${backgorund});
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 100%;
-  height: 100vh;
-`;
-
-const Text = styled.div`
-  color: white;
-  margin: auto;
-  width: 40%;
-  height: 30px;
-  border-radius: 50px;
-  font-size: 4em;
-`;
-
-const SmallText = styled.div`
-  color: white;
-  margin: auto;
-  width: 40%;
-  height: 30px;
-  border-radius: 50px;
-  font-size: 1em;
-`;
-
-const AddInput = styled.input`
-  margin: auto;
-  display: block;
-  width: 20%;
-  height: 30px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 100px;
-`;
-
-const Button = styled.button`
-  margin: auto;
-  display: block;
-  min-width: 10%;
-  height: 100px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2em;
-  text-align: center;
-  &:hover {
-    color: black;
-  }
-`;
 
 export const MainPage = () => {
   const navigate = useNavigate();
 
-  // 기록
-  const [record, setRecord] = useState(0);
+  const [contractInstance, setContractInstance] = useState();
 
   const [data, setData] = useState();
 
   const [countDown, setCountDown] = useState();
-  const [paid, setPaid] = useState(false);
 
   // contract address
   const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
@@ -95,17 +41,22 @@ export const MainPage = () => {
     }
   }, [data]);
 
-  const checkGameState = async () => {
-    return await contractInstance.methods.distributePrize().call();
-    // if(result)
-  };
-
   // contract instance 생성 후 game info get
   useEffect(() => {
     console.log(contractInstance);
     getGameInfo();
     // checkGameState();
   }, [contractInstance]);
+
+  // contract instance
+  const getInstance = async () => {
+    // console.log(web3);
+    try {
+      setContractInstance(await new window.web3.eth.Contract(ABI, address));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // 최초 랜더링시 실행
   useEffect(() => {
@@ -122,63 +73,6 @@ export const MainPage = () => {
     }
   }, []);
 
-  // nickname input handler
-  const handleInput = (e) => {
-    setNickname(e.target.value);
-  };
-
-  // metamask 연결
-  const connectWallet = async () => {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    // const accounts = await web3.eth.requestAccounts();
-    setAccount(accounts[0]);
-    console.log(account);
-  };
-
-  // 참가비
-  const payFee = async () => {
-    try {
-      // 게임 참가비 송금
-      await contractInstance.methods.payEntryFee().send({
-        from: account,
-        value: window.web3.utils.toWei("0.0005", "ether"),
-      });
-      setPaid(true);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // 게임 시작 버튼. ether 송금
-  const handleGameStart = async () => {
-    if (account && nickname) {
-      console.log(account, nickname);
-    } else if (!account) {
-      alert("메타마스크를 연결해주세요");
-    } else {
-      alert("닉네임을 입력해주세요");
-    }
-    try {
-      // 게임 참가비 송금
-      // await contractInstance.methods.payEntryFee().send({
-      //   from: account,
-      //   value: window.web3.utils.toWei("0.0005", "ether"),
-      // });
-      console.log(contractInstance, account, nickname);
-      navigate("/game", {
-        state: {
-          contractInstance: contractInstance,
-          account: account,
-          nickname: nickname,
-        },
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const Timer = () => {
     setInterval(convertTime, 1000);
   };
@@ -194,37 +88,22 @@ export const MainPage = () => {
     setCountDown({ day: diffDay, hour: diffHour, min: diffMin, sec: diffSec });
   };
 
-  // return (
-  //   <Container>
-  //     {countDown ? (
-  //       <Text>
-  //         {countDown.day}일 {countDown.hour}시간 {countDown.min}분
-  //         {countDown.sec} 초
-  //       </Text>
-  //     ) : null}
-  //     {data ? (
-  //       <SmallText style={{ marginTop: 50 }}>
-  //         누적 {data[1]}명이 참가하였고 누적 상금은{" "}
-  //         {data[2] / 1000000000000000000} ether이며 최고기록은 {data[5]}{" "}
-  //         초입니다.
-  //       </SmallText>
-  //     ) : null}
-  //     <AddInput onChange={handleInput} placeholder="닉네임을 입력해주세요" />
-  //     {!account ? <Button onClick={connectWallet}>지갑 연결하기</Button> : null}
-  //     {/* {!paid ? <Button onClick={payFee}>참가비 내기</Button> : null} */}
-  //     <Button onClick={handleGameStart}>Start Game!</Button>
-  //   </Container>
-  let bestScore = 123.456789;
-
   return (
     <MainContainer>
       <MainBanner>
-        <h1>Total: {bestScore}ETH</h1>
+        {countDown ? (
+          <h2>
+            {countDown.day}일 {countDown.hour}시간 {countDown.min}분
+            {countDown.sec} 초
+          </h2>
+        ) : null}
+        <h1>Total: {data ? data[2] / 1000000000000000000 : null}ETH</h1>
         <h1>
           Best:{" "}
-          {`${String(bestTime.m).padStart(2, "0")}(m) : ${String(
+          {/* {`${String(bestTime.m).padStart(2, "0")}(m) : ${String(
             bestTime.s
-          ).padStart(2, "0")}(s) ${String(bestTime.ms).padStart(2, "0")}(ms)`}
+          ).padStart(2, "0")}(s) ${String(bestTime.ms).padStart(2, "0")}(ms)`} */}
+          {data ? data[5] : null}
         </h1>
       </MainBanner>
       <BodyContainer>
