@@ -158,7 +158,12 @@ export const GamePage = () => {
       )}
       {loading ? (
         <LoadingContainer>
-          <img src="/ethereum.png" height={100} width={100} alt="ethereum" />
+          <img
+            src="/dapp/ethereum.png"
+            height={100}
+            width={100}
+            alt="ethereum"
+          />
         </LoadingContainer>
       ) : (
         <></>
