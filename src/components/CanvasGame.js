@@ -107,7 +107,7 @@ const CanvasGame = ({ width, height, timerStart, timerStop }) => {
 
   return (
     <canvas
-      style={{ border: "1px solid black" }}
+      style={{ border: "2px solid #00aba9" }}
       width={700}
       height={400}
       ref={canvasRef}

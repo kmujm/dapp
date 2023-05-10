@@ -8,12 +8,12 @@
   overflow: hidden;
 }
 
-.board {
+/* .board {
   margin: auto;
   height: 450px;
   width: 90%;
   border: #00aba9 5px solid;
-}
+} */
 
 .clock-holder {
   width: 100%;

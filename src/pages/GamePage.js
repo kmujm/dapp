@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import "../App.css";
 import CanvasGame from "../components/CanvasGame";
 
 export const GamePage = () => {
+  const { contractInstance, account } = useLocation();
   const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
   const [interv, setInterv] = useState();
 
@@ -15,6 +17,15 @@ export const GamePage = () => {
   const stop = () => {
     clearInterval(interv);
     // setTime({ ms: 0, s: 0, m: 0, h: 0 });
+
+    // 기록 갱신 여부 체크
+    gameOver();
+  };
+
+  const gameOver = async () => {
+    await contractInstance.methods
+      .updateRecord(time.h + time.m * 60 + time.s * 360 + time.ms * 3600)
+      .send({ from: account });
   };
 
   let updatedMs = time.ms,
@@ -72,5 +83,5 @@ const GameContainer = styled.div`
   align-items: center;
   height: 100%;
   overflow: hidden;
-  border: 2px solid #00aba9;
+  // border: 2px solid #00aba9;
 `;
