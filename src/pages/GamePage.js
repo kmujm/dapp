@@ -128,8 +128,6 @@ export const GamePage = () => {
     }
   };
 
-  // gameStart && contractInstance && account && paid
-
   return (
     <div className="game-container">
       {gameStart && contractInstance && account && paid ? (
