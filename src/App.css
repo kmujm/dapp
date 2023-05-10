@@ -6,6 +6,10 @@
   height: 100%;
   margin: 0 40px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* .board {

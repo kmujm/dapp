@@ -81,9 +81,8 @@ const GameContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   overflow: hidden;
   border: 2px solid #00aba9;
-  min-width: 700px;
-  min-height: 400px;
+  width: 700px;
+  height: 400px;
 `;

@@ -1,43 +1,44 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import AdsContainer from "../components/AdsContainer";
 
 import Web3 from "web3";
 
 import backgorund from "../assets/background2.jpeg";
 import { ABI } from "../assets/abi";
 
-const Container = styled.div`
-  background-image: url(${backgorund});
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 100%;
-  height: 100vh;
-`;
+// const Container = styled.div`
+//   background-image: url(${backgorund});
+//   background-repeat: no-repeat;
+//   background-size: cover;
+//   width: 100%;
+//   height: 100vh;
+// `;
 
-const AddInput = styled.input`
-  margin: auto;
-  display: block;
-  width: 20%;
-  height: 30px;
-  border: none;
-  border-radius: 10px;
-`;
+// const AddInput = styled.input`
+//   margin: auto;
+//   display: block;
+//   width: 20%;
+//   height: 30px;
+//   border: none;
+//   border-radius: 10px;
+// `;
 
-const Button = styled.button`
-  margin: auto;
-  display: block;
-  width: 10%;
-  height: 100px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2em;
-  text-align: center;
-  &:hover {
-    color: black;
-  }
-`;
+// const Button = styled.button`
+//   margin: auto;
+//   display: block;
+//   width: 10%;
+//   height: 100px;
+//   background: none;
+//   border: none;
+//   color: white;
+//   font-size: 2em;
+//   text-align: center;
+//   &:hover {
+//     color: black;
+//   }
+// `;
 
 export const MainPage = () => {
   const navigate = useNavigate();
@@ -119,12 +120,10 @@ export const MainPage = () => {
       console.log(account, nickname);
       // 게임 참가비 송금
 
-      await contractInstance.methods
-        .play()
-        .send({
-          from: account,
-          value: window.web3.utils.toWei("0.001", "ether"),
-        });
+      await contractInstance.methods.play().send({
+        from: account,
+        value: window.web3.utils.toWei("0.001", "ether"),
+      });
       navigate("/game", {
         contractInstance: contractInstance,
         account: account,
@@ -136,11 +135,85 @@ export const MainPage = () => {
     }
   };
 
+  let bestTime = {
+    m: 12,
+    s: 5,
+    ms: 88,
+  };
+
+  let bestScore = 123.456789;
+
   return (
-    <Container>
-      <AddInput onChange={handleInput} placeholder="닉네임을 입력해주세요" />
-      {!account ? <Button onClick={connectWallet}>지갑 연결하기</Button> : null}
-      <Button onClick={handleGameStart}>Start Game!</Button>
-    </Container>
+    <MainContainer>
+      <MainBanner>
+        <h1>Total: {bestScore}ETH</h1>
+        <h1>
+          Best:{" "}
+          {`${String(bestTime.m).padStart(2, "0")}(m) : ${String(
+            bestTime.s
+          ).padStart(2, "0")}(s) ${String(bestTime.ms).padStart(2, "0")}(ms)`}
+        </h1>
+      </MainBanner>
+      <BodyContainer>
+        <AdsContainer />
+        <Main>
+          <Button>
+            <h2>Get started</h2>
+          </Button>
+        </Main>
+        <AdsContainer />
+      </BodyContainer>
+    </MainContainer>
   );
 };
+
+const MainContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainBanner = styled.div`
+  width: 100%;
+  height: 40%;
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const BodyContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 216px 2fr 216px;
+`;
+
+const Main = styled.main`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Button = styled.div`
+  border: 2px solid black;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 225px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  h2 {
+    margin: 0;
+    padding: 0;
+  }
+`;
