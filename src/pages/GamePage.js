@@ -37,7 +37,6 @@ export const GamePage = () => {
     });
     // const accounts = await web3.eth.requestAccounts();
     await setAccount(accounts[0]);
-    console.log(account);
   };
 
   // 최초 랜더링시 실행
@@ -45,8 +44,6 @@ export const GamePage = () => {
     if (typeof window.ethereum !== "undefined") {
       try {
         window.web3 = new Web3(window.ethereum);
-        // setWeb3(window.web3);
-        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
         connectWallet();
         getInstance();
       } catch (err) {
@@ -62,16 +59,13 @@ export const GamePage = () => {
 
   const stop = () => {
     clearInterval(interv);
-    // setTime({ ms: 0, s: 0, m: 0, h: 0 });
-
-    // 기록 갱신 여부 체크
     gameOver();
   };
 
   const gameOver = async () => {
     await contractInstance.methods
       .recordScore(
-        (time.h * 3600 + time.m * 360 + time.s * 60) * 1000 + time.ms,
+        (time.h * 3600 + time.m * 60 + time.s) * 1000 + time.ms,
         nickname
       )
       .send({ from: account });
@@ -131,6 +125,8 @@ export const GamePage = () => {
     }
   };
 
+  // gameStart && contractInstance && account && paid
+
   return (
     <div className="game-container">
       {gameStart && contractInstance && account && paid ? (
@@ -146,7 +142,7 @@ export const GamePage = () => {
             </div>
           </div>
           <GameContainer>
-            <CanvasGame timerStart={start} timerStop={stop} />
+            <CanvasGame timerStart={start} timerStop={stop} timer={time} />
           </GameContainer>
         </>
       ) : (
