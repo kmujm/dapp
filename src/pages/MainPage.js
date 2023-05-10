@@ -3,77 +3,11 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import AdsContainer from "../components/AdsContainer";
 
-import Web3 from "web3";
-
-import backgorund from "../assets/background2.jpeg";
-import { ABI } from "../assets/abi";
-
-// const AddInput = styled.input`
-//   margin: auto;
-//   display: block;
-//   width: 20%;
-//   height: 30px;
-//   border: none;
-//   border-radius: 10px;
-// `;
-
-// const Button = styled.button`
-//   margin: auto;
-//   display: block;
-//   width: 10%;
-//   height: 100px;
-//   background: none;
-//   border: none;
-//   color: white;
-//   font-size: 2em;
-//   text-align: center;
-//   &:hover {
-//     color: black;
-//   }
-// `;
-
 export const MainPage = () => {
   const navigate = useNavigate();
 
-  const [nickname, setNickname] = useState("");
-
   // 기록
   const [record, setRecord] = useState(0);
-
-  // contract address
-
-  // // game info, 상금, 최고기록 등 정보
-  // const getGameInfo = async () => {
-  //   return await contractInstance.methods.getGameInfo().call();
-  // };
-
-  // const checkGameState = async () => {
-  //   return await contractInstance.methods.checkGameOver().call();
-  //   // if(result)
-  // };
-
-  // // contract instance 생성 후 game info get
-  // useEffect(() => {
-  //   console.log(contractInstance);
-  //   const data = getGameInfo();
-  //   console.log(data);
-  //   checkGameState();
-  // }, [contractInstance]);
-
-  // // nickname input handler
-  // const handleInput = (e) => {
-  //   setNickname(e.target.value);
-  // };
-
-  // // metamask 연결
-  // const connectWallet = async () => {
-  //   const accounts = await window.ethereum.request({
-  //     method: "eth_requestAccounts",
-  //   });
-  //   // const accounts = await web3.eth.requestAccounts();
-  //   setAccount(accounts[0]);
-  //   console.log(account);
-  // };
 
   // // 게임 시작 버튼. ether 송금
   // const handleGameStart = async () => {
