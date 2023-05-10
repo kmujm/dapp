@@ -4,10 +4,56 @@ import styled from "styled-components";
 import "../App.css";
 import CanvasGame from "../components/CanvasGame";
 
+import Web3 from "web3";
+import { ABI } from "../assets/abi";
+
 export const GamePage = () => {
-  const { contractInstance, account } = useLocation();
   const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
   const [interv, setInterv] = useState();
+  const [account, setAccount] = useState("");
+
+  const address = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+
+  // 이더리움 객체 가져오기
+  const [web3, setWeb3] = useState();
+  const [contractInstance, setContractInstance] = useState();
+
+  // contract instance
+  const getInstance = async () => {
+    // console.log(web3);
+    try {
+      setContractInstance(await new window.web3.eth.Contract(ABI, address));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // metamask 연결
+  const connectWallet = async () => {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    // const accounts = await web3.eth.requestAccounts();
+    await setAccount(accounts[0]);
+    console.log(account);
+  };
+
+  // 최초 랜더링시 실행
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        window.web3 = new Web3(window.ethereum);
+        // setWeb3(window.web3);
+        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+
+        connectWallet();
+
+        getInstance();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, []);
 
   const start = () => {
     run();
