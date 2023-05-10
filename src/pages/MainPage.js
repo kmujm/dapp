@@ -131,6 +131,10 @@ export const MainPage = () => {
               <h2>정산 후 새 게임 생성</h2>
             </Button>
           )}
+          <br></br>
+          <a href="https://youtu.be/N-r4XH8DAiY">
+            시연 동영상 https://youtu.be/N-r4XH8DAiY
+          </a>
         </Main>
         <AdsContainer />
       </BodyContainer>
