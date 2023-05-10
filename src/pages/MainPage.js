@@ -8,15 +8,39 @@ import { ABI } from "../assets/abiobj";
 
 export const MainPage = () => {
   const navigate = useNavigate();
+  // 기록
+  const [contractInstance, setContractInstance] = useState(undefined);
+  const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
-  const [contractInstance, setContractInstance] = useState();
+  const [account, setAccount] = useState();
+
+  // contract instance
+  const getInstance = async () => {
+    // console.log(web3);
+    try {
+      setContractInstance(await new window.web3.eth.Contract(ABI, address));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        window.web3 = new Web3(window.ethereum);
+        // setWeb3(window.web3);
+        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+        getInstance();
+        console.log(contractInstance.methods.getWinner());
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, []);
 
   const [data, setData] = useState();
 
   const [countDown, setCountDown] = useState();
-
-  // contract address
-  const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
   let bestTime = {
     m: 12,
@@ -48,16 +72,6 @@ export const MainPage = () => {
     // checkGameState();
   }, [contractInstance]);
 
-  // contract instance
-  const getInstance = async () => {
-    // console.log(web3);
-    try {
-      setContractInstance(await new window.web3.eth.Contract(ABI, address));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // 최초 랜더링시 실행
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
@@ -88,6 +102,10 @@ export const MainPage = () => {
     setCountDown({ day: diffDay, hour: diffHour, min: diffMin, sec: diffSec });
   };
 
+  const handleDistributePrize = async () => {
+    await contractInstance.methods.distributePrize().send({ from: account });
+  };
+
   return (
     <MainContainer>
       <MainBanner>
@@ -109,9 +127,15 @@ export const MainPage = () => {
       <BodyContainer>
         <AdsContainer />
         <Main>
-          <Button onClick={() => navigate("/game")}>
-            <h2>Get started</h2>
-          </Button>
+          {data && data[0] > 0 ? (
+            <Button onClick={() => navigate("/game")}>
+              <h2>Get started</h2>
+            </Button>
+          ) : (
+            <Button>
+              <h2>정산 후 새 게임 생성</h2>
+            </Button>
+          )}
         </Main>
         <AdsContainer />
       </BodyContainer>
@@ -129,7 +153,9 @@ const MainContainer = styled.div`
 const MainBanner = styled.div`
   width: 100%;
   height: 40%;
-  background-color: black;
+  background-image: url(https://satoshidice.com/static/satoshi-dice-header-transparent-e4621067994134bca386e2f270ecf408.png),
+    linear-gradient(to right, rgb(131, 96, 195), rgb(46, 191, 145));
+
   color: white;
   display: flex;
   flex-direction: column;
