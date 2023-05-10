@@ -4,10 +4,56 @@ import styled from "styled-components";
 import "../App.css";
 import CanvasGame from "../components/CanvasGame";
 
+import Web3 from "web3";
+import { ABI } from "../assets/abi";
+
 export const GamePage = () => {
-  const { contractInstance, account } = useLocation();
   const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
   const [interv, setInterv] = useState();
+  const [account, setAccount] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [gameStart, setGameStart] = useState(false);
+
+  const address = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+
+  // 이더리움 객체 가져오기
+  const [web3, setWeb3] = useState();
+  const [contractInstance, setContractInstance] = useState(undefined);
+
+  // contract instance
+  const getInstance = async () => {
+    // console.log(web3);
+    try {
+      setContractInstance(await new window.web3.eth.Contract(ABI, address));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // metamask 연결
+  const connectWallet = async () => {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    // const accounts = await web3.eth.requestAccounts();
+    await setAccount(accounts[0]);
+    console.log(account);
+  };
+
+  // 최초 랜더링시 실행
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        window.web3 = new Web3(window.ethereum);
+        // setWeb3(window.web3);
+        // const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+        connectWallet();
+        getInstance();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, []);
 
   const start = () => {
     run();
@@ -58,21 +104,44 @@ export const GamePage = () => {
     }
   };
 
+  const handleGameStart = () => {
+    if (!account) {
+      alert("지갑을 연결해 주세요!!");
+    } else if (!contractInstance) {
+      alert("스마트 컨트랙트를 연결중입니다. 잠시만 기다려주세요!");
+    } else {
+      setGameStart(true);
+    }
+  };
+
   return (
     <div className="game-container">
-      <div className="clock-holder">
-        <div className="stopwatch">
-          <div>
-            {timer()}&nbsp;&nbsp;
-            <span>{time.m >= 10 ? time.m : "0" + time.m}</span>&nbsp;:&nbsp;
-            <span>{time.s >= 10 ? time.s : "0" + time.s}</span>&nbsp;:&nbsp;
-            <span>{time.ms >= 10 ? time.ms : "0" + time.ms}</span>
+      {gameStart && contractInstance && account ? (
+        <>
+          <div className="clock-holder">
+            <div className="stopwatch">
+              <div>
+                {timer()}&nbsp;&nbsp;
+                <span>{time.m >= 10 ? time.m : "0" + time.m}</span>&nbsp;:&nbsp;
+                <span>{time.s >= 10 ? time.s : "0" + time.s}</span>&nbsp;:&nbsp;
+                <span>{time.ms >= 10 ? time.ms : "0" + time.ms}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <GameContainer>
-        <CanvasGame timerStart={start} timerStop={stop} />
-      </GameContainer>
+          <GameContainer>
+            <CanvasGame timerStart={start} timerStop={stop} />
+          </GameContainer>
+        </>
+      ) : (
+        <InputContainer>
+          <InputBar
+            onChange={(e) => setNickname(e.target.value)}
+            value={nickname}
+            placeholder={"Input your nickname"}
+          />
+          <Button onClick={handleGameStart}>Set</Button>
+        </InputContainer>
+      )}
     </div>
   );
 };
@@ -81,9 +150,34 @@ const GameContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   overflow: hidden;
   border: 2px solid #00aba9;
-  min-width: 700px;
-  min-height: 400px;
+  width: 700px;
+  height: 400px;
+`;
+
+const InputBar = styled.input`
+  display: block;
+  width: 20%;
+  height: 30px;
+  border: 1px dashed #00aba9;
+  border-radius: 10px;
+  padding: 0 5px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  color: white;
+`;
+
+const Button = styled.div`
+  background-color: #00aba9;
+  padding: 15px 15px;
+  border-radius: 10%;
+  cursor: pointer;
 `;

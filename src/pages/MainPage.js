@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Web3 from "web3";
 import { useNavigate } from "react-router-dom";
 
-import Web3 from "web3";
-
+import AdsContainer from "../components/AdsContainer";
 import backgorund from "../assets/background2.jpeg";
 import { ABI } from "../assets/abiobj";
 
@@ -61,13 +61,6 @@ const Button = styled.button`
 export const MainPage = () => {
   const navigate = useNavigate();
 
-  const [account, setAccount] = useState("");
-  const [nickname, setNickname] = useState("");
-
-  // 이더리움 객체 가져오기
-  const [web3, setWeb3] = useState();
-  const [contractInstance, setContractInstance] = useState();
-
   // 기록
   const [record, setRecord] = useState(0);
 
@@ -79,14 +72,10 @@ export const MainPage = () => {
   // contract address
   const address = "0xD0414937aeD63aC6bde8B0abd9E31Af040B65495";
 
-  // contract instance
-  const getInstance = async () => {
-    // console.log(web3);
-    try {
-      setContractInstance(await new window.web3.eth.Contract(ABI, address));
-    } catch (err) {
-      console.log(err);
-    }
+  let bestTime = {
+    m: 12,
+    s: 5,
+    ms: 88,
   };
 
   // game info, 상금, 최고기록 등 정보
@@ -205,25 +194,99 @@ export const MainPage = () => {
     setCountDown({ day: diffDay, hour: diffHour, min: diffMin, sec: diffSec });
   };
 
+  // return (
+  //   <Container>
+  //     {countDown ? (
+  //       <Text>
+  //         {countDown.day}일 {countDown.hour}시간 {countDown.min}분
+  //         {countDown.sec} 초
+  //       </Text>
+  //     ) : null}
+  //     {data ? (
+  //       <SmallText style={{ marginTop: 50 }}>
+  //         누적 {data[1]}명이 참가하였고 누적 상금은{" "}
+  //         {data[2] / 1000000000000000000} ether이며 최고기록은 {data[5]}{" "}
+  //         초입니다.
+  //       </SmallText>
+  //     ) : null}
+  //     <AddInput onChange={handleInput} placeholder="닉네임을 입력해주세요" />
+  //     {!account ? <Button onClick={connectWallet}>지갑 연결하기</Button> : null}
+  //     {/* {!paid ? <Button onClick={payFee}>참가비 내기</Button> : null} */}
+  //     <Button onClick={handleGameStart}>Start Game!</Button>
+  //   </Container>
+  let bestScore = 123.456789;
+
   return (
-    <Container>
-      {countDown ? (
-        <Text>
-          {countDown.day}일 {countDown.hour}시간 {countDown.min}분
-          {countDown.sec} 초
-        </Text>
-      ) : null}
-      {data ? (
-        <SmallText style={{ marginTop: 50 }}>
-          누적 {data[1]}명이 참가하였고 누적 상금은{" "}
-          {data[2] / 1000000000000000000} ether이며 최고기록은 {data[5]}{" "}
-          초입니다.
-        </SmallText>
-      ) : null}
-      <AddInput onChange={handleInput} placeholder="닉네임을 입력해주세요" />
-      {!account ? <Button onClick={connectWallet}>지갑 연결하기</Button> : null}
-      {/* {!paid ? <Button onClick={payFee}>참가비 내기</Button> : null} */}
-      <Button onClick={handleGameStart}>Start Game!</Button>
-    </Container>
+    <MainContainer>
+      <MainBanner>
+        <h1>Total: {bestScore}ETH</h1>
+        <h1>
+          Best:{" "}
+          {`${String(bestTime.m).padStart(2, "0")}(m) : ${String(
+            bestTime.s
+          ).padStart(2, "0")}(s) ${String(bestTime.ms).padStart(2, "0")}(ms)`}
+        </h1>
+      </MainBanner>
+      <BodyContainer>
+        <AdsContainer />
+        <Main>
+          <Button onClick={() => navigate("/game")}>
+            <h2>Get started</h2>
+          </Button>
+        </Main>
+        <AdsContainer />
+      </BodyContainer>
+    </MainContainer>
   );
 };
+
+const MainContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainBanner = styled.div`
+  width: 100%;
+  height: 40%;
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const BodyContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 216px 2fr 216px;
+`;
+
+const Main = styled.main`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Button = styled.div`
+  border: 2px solid black;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 225px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  h2 {
+    margin: 0;
+    padding: 0;
+  }
+`;
