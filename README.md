@@ -12,7 +12,7 @@
 
 ## Game Rules
 
-- entry fee: 0.0002 ether
+- entry fee: 0.0005 ether
 - 90% of the entry fee goes to the winner
 - 1% ~ 5% of the entry fee goes to the distributor (luckiest player)
 - 5% ~ 9% of the entry fee goes to the contract owner
