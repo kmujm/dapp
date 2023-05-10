@@ -70,7 +70,10 @@ export const GamePage = () => {
 
   const gameOver = async () => {
     await contractInstance.methods
-      .updateRecord(time.h + time.m * 60 + time.s * 360 + time.ms * 3600)
+      .recordScore(
+        (time.h * 3600 + time.m * 360 + time.s * 60) * 1000 + time.ms,
+        nickname
+      )
       .send({ from: account });
   };
 
