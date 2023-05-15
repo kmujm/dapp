@@ -112,17 +112,28 @@ export const MainPage = () => {
             data ? data[3] : ""
           }`}
         </h1>
-        {countDown ? (
+        {countDown &&
+        countDown.day >= 0 &&
+        countDown.hour >= 0 &&
+        countDown.min >= 0 &&
+        countDown.sec >= 0 ? (
           <h2>
             {countDown.day}일 {countDown.hour}시간 {countDown.min}분{" "}
             {countDown.sec}초
           </h2>
-        ) : null}
+        ) : (
+          <h2>새로운 게임을 생성해주세요</h2>
+        )}
       </MainBanner>
       <BodyContainer>
         <AdsContainer />
         <Main>
-          {data && data[0] > 0 ? (
+          {data &&
+          countDown &&
+          countDown.day >= 0 &&
+          countDown.hour >= 0 &&
+          countDown.min >= 0 &&
+          countDown.sec >= 0 ? (
             <Button onClick={() => navigate("/game")}>
               <h2>Get started</h2>
             </Button>
